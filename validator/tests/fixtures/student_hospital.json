@@ -1,0 +1,141 @@
+{
+  "title": "Untitled Diagram",
+  "seq": 26,
+  "tables": [
+    {
+      "id": 12,
+      "name": "hospital",
+      "x": 137,
+      "y": -85,
+      "color": "#e05d5d",
+      "fields": [
+        {
+          "id": 13,
+          "name": "id",
+          "type": "INT",
+          "pk": true,
+          "notNull": true,
+          "unique": false,
+          "increment": true,
+          "def": ""
+        },
+        {
+          "id": 14,
+          "name": "name",
+          "type": "VARCHAR",
+          "pk": false,
+          "notNull": true,
+          "unique": false,
+          "increment": false,
+          "def": ""
+        },
+        {
+          "id": 15,
+          "name": "address",
+          "type": "VARCHAR",
+          "pk": false,
+          "notNull": true,
+          "unique": false,
+          "increment": false,
+          "def": ""
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "name": "Doctor",
+      "x": 505,
+      "y": -80,
+      "color": "#e08b3d",
+      "fields": [
+        {
+          "id": 17,
+          "name": "id",
+          "type": "INT",
+          "pk": true,
+          "notNull": true,
+          "unique": false,
+          "increment": true,
+          "def": ""
+        },
+        {
+          "id": 18,
+          "name": "name",
+          "type": "VARCHAR",
+          "pk": false,
+          "notNull": true,
+          "unique": false,
+          "increment": false,
+          "def": ""
+        },
+        {
+          "id": 19,
+          "name": "hopital_id",
+          "type": "INT",
+          "pk": false,
+          "notNull": false,
+          "unique": false,
+          "increment": false,
+          "def": ""
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "name": "Patient",
+      "x": -222,
+      "y": -88,
+      "color": "#c9a227",
+      "fields": [
+        {
+          "id": 22,
+          "name": "id",
+          "type": "INT",
+          "pk": true,
+          "notNull": true,
+          "unique": false,
+          "increment": true,
+          "def": ""
+        },
+        {
+          "id": 23,
+          "name": "name",
+          "type": "VARCHAR",
+          "pk": false,
+          "notNull": true,
+          "unique": false,
+          "increment": false,
+          "def": ""
+        },
+        {
+          "id": 24,
+          "name": "hospital_id",
+          "type": "VARCHAR",
+          "pk": false,
+          "notNull": true,
+          "unique": false,
+          "increment": false,
+          "def": ""
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": 20,
+      "cardinality": "many_to_one",
+      "startTable": 16,
+      "startField": 19,
+      "endTable": 12,
+      "endField": 13
+    },
+    {
+      "id": 25,
+      "cardinality": "many_to_one",
+      "startTable": 21,
+      "startField": 24,
+      "endTable": 12,
+      "endField": 13
+    }
+  ]
+}
