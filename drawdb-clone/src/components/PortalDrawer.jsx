@@ -148,7 +148,6 @@ function SolvePanel({ question }) {
         <label className="fld" style={{ flex: 1 }}>Validator
           <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)}>
             <option value="bliss">Bliss</option>
-            <option value="saucy">Saucy</option>
           </select>
         </label>
         <button className="btn primary" disabled={busy} onClick={submit}

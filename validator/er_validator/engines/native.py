@@ -1,8 +1,8 @@
 """Shared core for engines that wrap a native automorphism-group tool.
 
-Bliss and Saucy both compute the automorphism group of a vertex-colored
-graph — neither answers "are these two graphs isomorphic?" directly. The
-standard reduction, used here for both engines:
+Bliss computes the automorphism group of a vertex-colored graph — it does
+not answer "are these two graphs isomorphic?" directly. The standard
+reduction, used here:
 
     H = G1 ⊎ G2, plus apex1 joined to every vertex of G1 and apex2 joined
     to every vertex of G2, both apexes sharing a color used nowhere else.
@@ -15,8 +15,7 @@ tools print. The apexes keep the test correct even when the diagrams are
 disconnected (isolated tables).
 
 Subclasses implement only: binary discovery, input-file writing, and the
-numeric base of the printed cycles. That is the whole difference between
-"bliss mode" and "saucy mode".
+numeric base of the printed cycles.
 """
 import json
 import os
@@ -86,7 +85,7 @@ _NUMERIC_CYCLE = re.compile(r'^[\d,\s]+$')
 
 def parse_generator_cycles(text, base):
     """Yield cycles (lists of 0-based ints) from cycle notation anywhere in the
-    output — '(0 1)(2 3)' (saucy) or 'Generator: (1,3)(2,4)' (bliss). Orbit
+    output — 'Generator: (1,3)(2,4)' (bliss). Orbit
     union-find doesn't need cycles grouped per generator, so parsing the whole
     text also survives tools wrapping long permutations across lines. Cycles
     containing anything non-numeric (prose in parentheses) are ignored."""
@@ -99,7 +98,7 @@ def parse_generator_cycles(text, base):
 
 
 class NativeGroupEngine(IsomorphismEngine):
-    #: numeric base of vertices in the tool's printed cycles (saucy 0, bliss/DIMACS 1)
+    #: numeric base of vertices in the tool's printed cycles (bliss/DIMACS 1)
     cycle_base = 0
     timeout_s = 60
     input_suffix = '.txt'

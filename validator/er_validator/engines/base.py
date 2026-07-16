@@ -1,6 +1,6 @@
 """Strategy pattern: one interface, interchangeable isomorphism backends.
 
-Swapping algorithms is a single string: get_engine("bliss") / get_engine("saucy"),
+Swapping algorithms is a single string: get_engine("bliss"),
 driven by the API's `algorithm` field or the VALIDATOR_ALGORITHM env var.
 """
 from abc import ABC, abstractmethod
@@ -36,9 +36,7 @@ def get_engine(name):
 
 # populated at the bottom to avoid circular imports
 from .bliss_engine import BlissEngine   # noqa: E402
-from .saucy_engine import SaucyEngine   # noqa: E402
 
 ENGINES = {
     'bliss': BlissEngine,
-    'saucy': SaucyEngine,
 }

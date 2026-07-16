@@ -4,7 +4,7 @@
 
 POST /validate
     body: {"teacher": <editor export json>, "student": <editor export json>,
-           "algorithm": "bliss" | "saucy"   (optional)}
+           "algorithm": "bliss"   (optional)}
     200 -> {"is_valid", "algorithm_used", "mismatches", "names", "stats"}
     422 -> malformed diagram / unknown algorithm
     500 -> native engine failure

@@ -2,7 +2,7 @@
 
 These run before the isomorphism engine. Any difference means the graphs
 cannot be isomorphic, so the engine is skipped — and, unlike a bare
-yes/no from Bliss/Saucy, each failed invariant yields a human-readable
+yes/no from Bliss, each failed invariant yields a human-readable
 mismatch for the student.
 """
 from collections import Counter

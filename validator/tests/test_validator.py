@@ -7,7 +7,7 @@ import pytest
 from er_validator import SchemaError, validate
 
 FIXTURES = Path(__file__).parent / 'fixtures'
-ENGINES = ['bliss', 'saucy']
+ENGINES = ['bliss']
 
 # ---------- helpers to build editor-shaped export documents ----------
 

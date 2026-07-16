@@ -1,10 +1,9 @@
 # ER Diagram Validator (v1)
 
 Validates a **student's** ER diagram against a **teacher's** reference model by
-**colored-graph isomorphism**, using the real native engines:
+**colored-graph isomorphism**, using the real native engine:
 
 - **Bliss** — vendored from [digraphs/bliss](https://github.com/digraphs/bliss) (strong on graphs with deep symmetry)
-- **Saucy** — vendored from [hrbrmstr/saucy](https://github.com/hrbrmstr/saucy) (strong on sparse graphs)
 
 No algorithm code was rewritten. Both diagrams come straight from the
 drawdb-clone editor's **Save (JSON export)** button.
@@ -13,7 +12,7 @@ drawdb-clone editor's **Save (JSON export)** button.
 
 ```bash
 cd validator
-bash setup.sh                      # clones + compiles bliss and saucy (needs cc, make, git)
+bash setup.sh                      # clones + compiles bliss (needs cc, make, git)
 python3 -m venv .venv
 ./.venv/bin/pip install -r requirements.txt
 ```
@@ -25,10 +24,10 @@ python3 -m venv .venv
 ./.venv/bin/uvicorn er_validator.api:app --port 8000
 
 # CLI
-./.venv/bin/python -m er_validator.cli teacher.json student.json --algorithm saucy
+./.venv/bin/python -m er_validator.cli teacher.json student.json --algorithm bliss
 # exit codes: 0 valid, 1 not valid, 2 error
 
-# tests (both engines)
+# tests
 ./.venv/bin/python -m pytest tests/
 ```
 
@@ -58,7 +57,7 @@ Response:
 }
 ```
 
-`GET /health` reports whether both native binaries are ready.
+`GET /health` reports whether the native binary is ready.
 
 ## Entity name comparison (`er_validator/name_matcher.py`)
 
@@ -95,12 +94,12 @@ The report is advisory: `is_valid` stays purely structural.
   with different naming still passes (v1 decision; name matching is a v2 flag).
 - **Same-table fields** are joined into a clique (entity membership).
 - **Each relationship** becomes a chain `startField — FK_SRC — FK_DST — endField`;
-  the two marker nodes carry direction + cardinality as colors, because Bliss and
-  Saucy color vertices, not edges.
+  the two marker nodes carry direction + cardinality as colors, because Bliss
+  colors vertices, not edges.
 
-## How two automorphism tools answer an isomorphism question
+## How an automorphism tool answers an isomorphism question
 
-Bliss and Saucy compute **automorphism groups** of one graph; neither compares two
+Bliss computes the **automorphism group** of one graph; it does not compare two
 graphs directly. `engines/native.py` uses the standard reduction: build
 `H = G_teacher ⊎ G_student` plus two apex vertices of a unique shared color (apex1
 joined to every teacher vertex, apex2 to every student vertex). Then
@@ -115,16 +114,15 @@ The apexes keep this correct even for disconnected diagrams.
 ## Swapping algorithms (Strategy pattern)
 
 `engines/base.py` defines the `IsomorphismEngine` interface and the registry
-`ENGINES = {"bliss": BlissEngine, "saucy": SaucyEngine}`. The two engines share all
-logic via `NativeGroupEngine` and differ only in:
+`ENGINES = {"bliss": BlissEngine}`. An engine implements, on top of the shared
+`NativeGroupEngine` logic, only:
 
 | | input format | binary | cycle numbering |
 |---|---|---|---|
 | `BlissEngine` | DIMACS (`p edge`, `n v c`, `e u v`) | `vendor/bliss/bliss` | 1-based |
-| `SaucyEngine` | saucy "amorph" (`n e p`, color blocks, edges) | `vendor/saucy_bin` | 0-based |
 
 Adding another backend (e.g. nauty) = one small subclass + one registry line.
-Binary paths resolve as: `BLISS_BIN`/`SAUCY_BIN` env var → `vendor/paths.json` → default.
+Binary paths resolve as: `BLISS_BIN` env var → `vendor/paths.json` → default.
 
 ## Pipeline
 
@@ -139,11 +137,7 @@ Binary paths resolve as: `BLISS_BIN`/`SAUCY_BIN` env var → `vendor/paths.json`
 
 ## Notes & licenses
 
-- `vendor/saucy_cli.c` is ours: the upstream saucy repo wraps the engine for R, so
-  we drive the untouched engine (`vendor/saucy/src/ssaucy.c`) with a ~100-line
-  stdio front end instead.
-- Saucy's license (see `vendor/saucy/LICENSE`) permits research/education use —
-  fine here, review before any commercial deployment. Bliss is LGPL-3.0.
+- Bliss is LGPL-3.0.
 - v2 ideas: name normalization/fuzzy matching, witness mapping (which student field
   ↔ which teacher field), partial-credit scoring, a Validate button in the editor.
 

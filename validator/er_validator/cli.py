@@ -1,4 +1,4 @@
-"""CLI: python -m er_validator.cli teacher.json student.json [--algorithm bliss|saucy]
+"""CLI: python -m er_validator.cli teacher.json student.json [--algorithm bliss]
 
 Exit codes: 0 = valid, 1 = not valid, 2 = error (bad input / engine failure).
 """
@@ -14,11 +14,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser(
         prog='er_validator',
         description="Validate a student's ER diagram export against a teacher's reference "
-                    'via colored-graph isomorphism (Bliss / Saucy).')
+                    'via colored-graph isomorphism (Bliss).')
     ap.add_argument('teacher', help="teacher's reference diagram JSON (editor export)")
     ap.add_argument('student', help="student's diagram JSON (editor export)")
     ap.add_argument('-a', '--algorithm', default=default_algorithm(),
-                    choices=['bliss', 'saucy'], help='isomorphism backend (default: %(default)s)')
+                    choices=['bliss'], help='isomorphism backend (default: %(default)s)')
     ap.add_argument('--compact', action='store_true', help='single-line JSON output')
     args = ap.parse_args(argv)
 

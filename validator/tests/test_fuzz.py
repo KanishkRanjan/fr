@@ -4,8 +4,7 @@ For random diagrams:
   * every semantics-preserving scramble (rename, reorder, renumber ids, flip
     relationship drawing direction, add redundant PK flags) must validate;
   * every guaranteed-semantic mutation (type/constraint change, added/removed
-    field or relationship, 1:1 <-> N:1 change) must NOT validate;
-  * Bliss and Saucy must agree on every case.
+    field or relationship, 1:1 <-> N:1 change) must NOT validate.
 """
 import copy
 import random
@@ -158,9 +157,8 @@ def mutate(doc, seed):
 def test_scrambled_diagram_is_equivalent(seed):
     original = gen_diagram(seed)
     scrambled = scramble(original, seed + 1)
-    for engine in ('bliss', 'saucy'):
-        r = validate(original, scrambled, engine)
-        assert r['is_valid'] is True, (engine, seed, r['mismatches'])
+    r = validate(original, scrambled, 'bliss')
+    assert r['is_valid'] is True, (seed, r['mismatches'])
 
 
 @pytest.mark.parametrize('seed', range(40, 100))
@@ -169,9 +167,5 @@ def test_mutated_diagram_is_not_equivalent(seed):
     mutated = mutate(original, seed + 1)
     if mutated is None:
         pytest.skip('mutation not applicable to this random diagram')
-    results = {}
-    for engine in ('bliss', 'saucy'):
-        r = validate(original, mutated, engine)
-        results[engine] = r['is_valid']
-        assert r['is_valid'] is False, (engine, seed, 'mutation went undetected')
-    assert results['bliss'] == results['saucy']
+    r = validate(original, mutated, 'bliss')
+    assert r['is_valid'] is False, (seed, 'mutation went undetected')

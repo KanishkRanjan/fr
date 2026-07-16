@@ -7,7 +7,7 @@ Mapping (per project spec):
     (encodes "these fields belong to one entity");
   * each relationship start->end becomes a 2-node chain
         startField — FK_SRC — FK_DST — endField
-    the marker colors carry direction and cardinality, since Bliss/Saucy color
+    the marker colors carry direction and cardinality, since Bliss colors
     vertices, not edges.
 """
 from dataclasses import dataclass, field
