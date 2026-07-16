@@ -9,26 +9,58 @@ function currentDiagramDoc() {
   return { title: s.title, seq: s.seq, tables: s.tables, relationships: s.relationships };
 }
 
-function ResultPanel({ result }) {
-  if (!result) return null;
+function NamesPanel({ names }) {
+  if (!names) return null;
+  const tone = names.score >= 80 ? 'good' : names.score >= 50 ? 'warn' : 'bad';
   return (
-    <div className={`verdict ${result.is_valid ? 'pass' : 'fail'}`}>
-      <div className="verdict-head">
-        {result.is_valid ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
-        <span>{result.is_valid ? 'Correct — diagram matches the reference model' : 'Not a match yet'}</span>
+    <div className="names-report">
+      <div className="names-head">
+        <span>Table naming</span>
+        <span className={`names-score ${tone}`}>{names.score}/100</span>
       </div>
-      <div className="verdict-meta">
-        engine: {result.algorithm_used}
-        {result.stats?.engine_ran && result.stats.engine_ms != null && ` · ${result.stats.engine_ms} ms`}
-      </div>
-      {!result.is_valid && (
-        <ul className="verdict-list">
-          {result.mismatches.map((m, i) => (
-            <li key={i}><b>{m.code}</b> — {m.message}</li>
+      {names.matched.length > 0 && (
+        <ul className="names-list">
+          {names.matched.map((m, i) => (
+            <li key={i}>
+              <span className={`names-tag ${m.type}`}>{m.type}</span>
+              <span className="names-pair">{m.student} → {m.teacher}</span>
+            </li>
           ))}
         </ul>
       )}
+      {names.missing.length > 0 && (
+        <div className="names-line bad">Missing: {names.missing.join(', ')}</div>
+      )}
+      {names.extra.length > 0 && (
+        <div className="names-line warn">Extra: {names.extra.join(', ')}</div>
+      )}
     </div>
+  );
+}
+
+function ResultPanel({ result }) {
+  if (!result) return null;
+  return (
+    <>
+      <div className={`verdict ${result.is_valid ? 'pass' : 'fail'}`}>
+        <div className="verdict-head">
+          {result.is_valid ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
+          <span>{result.is_valid ? 'Correct — diagram matches the reference model' : 'Not a match yet'}</span>
+        </div>
+        <div className="verdict-meta">
+          engine: {result.algorithm_used}
+          {result.stats?.engine_ran && result.stats.engine_ms != null && ` · ${result.stats.engine_ms} ms`}
+        </div>
+        {!result.is_valid && (
+          <ul className="verdict-list">
+            {result.mismatches.map((m, i) => (
+              <li key={i}><b>{m.code}</b> — {m.message}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <NamesPanel names={result.names} />
+    </>
   );
 }
 

@@ -4,6 +4,7 @@ import os
 from .diagnostics import compare
 from .engines import get_engine
 from .graph_builder import ColorTable, build_graph
+from .name_matcher import compare_entities
 from .schema import parse_diagram
 
 DEFAULT_ALGORITHM = 'bliss'
@@ -48,9 +49,16 @@ def validate(teacher_doc, student_doc, algorithm=None):
                 'teacher': None, 'student': None,
             })
 
+    # Name comparison is advisory: structure decides is_valid, names inform grading.
+    names = compare_entities(
+        [t.name for t in teacher.tables],
+        [t.name for t in student.tables],
+    )
+
     return {
         'is_valid': not mismatches,
         'algorithm_used': engine.name,
         'mismatches': mismatches,
+        'names': names,
         'stats': stats,
     }

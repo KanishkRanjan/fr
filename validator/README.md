@@ -50,6 +50,8 @@ Response:
       "message": "teacher has 1 field(s) of INT [NOT NULL]; student has 0",
       "teacher": 1, "student": 0 }
   ],
+  "names": { "score": 100, "matched": [...], "missing": [], "extra": [],
+             "scoring_breakdown": { ... } },
   "stats": { "teacher_nodes": 13, "student_nodes": 13,
              "teacher_edges": 15, "student_edges": 15,
              "engine_ran": false, "engine_ms": null }
@@ -57,6 +59,34 @@ Response:
 ```
 
 `GET /health` reports whether both native binaries are ready.
+
+## Entity name comparison (`er_validator/name_matcher.py`)
+
+Structural validation ignores names entirely, so every `/validate` response also
+carries a `names` report comparing table names (approach adapted from
+[Entity_engine](https://github.com/Divyapahuja31/Entity_engine)). Each name is
+normalized — camelCase split, lowercased, punctuation stripped, last word
+singularized (`OrderDetails` → `order detail`) — then matched in three stages:
+
+1. **exact** — identical normalized forms (`Orders` ↔ `order`);
+2. **semantic** — both names in the same synonym group of
+   `er_validator/ontology.json` (`Customer` ↔ `Client`);
+3. **fuzzy** — `max(Jaro-Winkler, Levenshtein)` similarity ≥ 0.8, closest
+   pairs matched first (`Custommer` ↔ `Customer`).
+
+Unmatched teacher names are `missing`, unmatched student names `extra`. The
+0–100 `score` weights matches per stage (exact/semantic 100, fuzzy 80) over the
+teacher's table count, minus penalties (extra 1.67 each, missing 0 by default).
+The report is advisory: `is_valid` stays purely structural.
+
+`POST /compare-names` exposes the matcher directly:
+```json
+{ "teacher": ["Customer", "Orders"], "student": ["client", "order"],
+  "weights": {"fuzzy": 80}, "penalties": {"extra": 1.67}, 
+  "similarity_threshold": 0.8, "custom_ontology": [["gadget", "widget"]] }
+```
+(all fields but `teacher`/`student` optional) → `{"score", "matched", "missing",
+"extra", "scoring_breakdown"}`.
 
 ## How diagrams become graphs (`er_validator/graph_builder.py`)
 

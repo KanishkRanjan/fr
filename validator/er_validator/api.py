@@ -5,9 +5,14 @@
 POST /validate
     body: {"teacher": <editor export json>, "student": <editor export json>,
            "algorithm": "bliss" | "saucy"   (optional)}
-    200 -> {"is_valid", "algorithm_used", "mismatches", "stats"}
+    200 -> {"is_valid", "algorithm_used", "mismatches", "names", "stats"}
     422 -> malformed diagram / unknown algorithm
     500 -> native engine failure
+
+POST /compare-names
+    body: {"teacher": [names], "student": [names],
+           "weights"?, "penalties"?, "similarity_threshold"?, "custom_ontology"?}
+    200 -> {"score", "matched", "missing", "extra", "scoring_breakdown"}
 
 Portal question storage (see store.py):
 
@@ -24,6 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import EngineError, SchemaError, validate, __version__
 from .core import default_algorithm
 from .engines import ENGINES
+from .name_matcher import DEFAULT_SIMILARITY_THRESHOLD, compare_entities
 from . import store
 
 app = FastAPI(title='ER Diagram Validator', version=__version__)
@@ -65,6 +71,21 @@ def validate_endpoint(payload: dict = Body(...)):
         raise HTTPException(422, str(e))
     except EngineError as e:
         raise HTTPException(500, str(e))
+
+
+@app.post('/compare-names')
+def compare_names_endpoint(payload: dict = Body(...)):
+    teacher = payload.get('teacher')
+    student = payload.get('student')
+    if not isinstance(teacher, list) or not isinstance(student, list):
+        raise HTTPException(422, 'body must contain "teacher" and "student" arrays of names')
+    return compare_entities(
+        teacher, student,
+        weights=payload.get('weights'),
+        penalties=payload.get('penalties'),
+        similarity_threshold=payload.get('similarity_threshold', DEFAULT_SIMILARITY_THRESHOLD),
+        custom_ontology=payload.get('custom_ontology') or (),
+    )
 
 
 @app.get('/questions')
