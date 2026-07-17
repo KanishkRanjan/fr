@@ -84,13 +84,13 @@ def build_graph(diagram, color_table):
         # same color so A->B and B->A produce isomorphic encodings. one_to_many
         # was already normalized into many_to_one by the parser.
         if r.cardinality == 'one_to_one':
-            c1 = c2 = ('FK', 'one_to_one')
+            src_color = dst_color = ('FK', 'one_to_one')
         else:
-            c1, c2 = ('FK_SRC', r.cardinality), ('FK_DST', r.cardinality)
-        m1 = add_vertex(c1, f'fk{r.id}:src')
-        m2 = add_vertex(c2, f'fk{r.id}:dst')
-        g.edges.append((vid[r.start_field], m1))
-        g.edges.append((m1, m2))
-        g.edges.append((m2, vid[r.end_field]))
+            src_color, dst_color = ('FK_SRC', r.cardinality), ('FK_DST', r.cardinality)
+        src_marker = add_vertex(src_color, f'fk{r.id}:src')
+        dst_marker = add_vertex(dst_color, f'fk{r.id}:dst')
+        g.edges.append((vid[r.start_field], src_marker))
+        g.edges.append((src_marker, dst_marker))
+        g.edges.append((dst_marker, vid[r.end_field]))
 
     return g

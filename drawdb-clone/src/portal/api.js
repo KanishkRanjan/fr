@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_VALIDATOR_URL || 'http://localhost:8000';
+// '' means same-origin (nginx proxies the API paths in the Docker deployment).
+const BASE = import.meta.env.VITE_VALIDATOR_URL ?? 'http://localhost:8000';
 
 async function req(path, options = {}) {
   let res;

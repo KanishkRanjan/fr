@@ -1,0 +1,24 @@
+services:
+  validator:
+    build: ./validator
+    environment:
+      # Frontend is same-origin through nginx, so CORS only matters if you
+      # also hit the API directly from another origin.
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+    volumes:
+      - portal-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build: ./drawdb-clone
+    ports:
+      - "8080:80"
+    depends_on:
+      - validator
+
+volumes:
+  portal-data:

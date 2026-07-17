@@ -5,11 +5,13 @@ A question = title + prompt text + the teacher's reference diagram
 role picker decides which endpoints a client uses.
 """
 import json
+import os
 import sqlite3
 import time
 from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parents[1] / 'portal.db'
+DB_PATH = Path(os.environ.get(
+    'PORTAL_DB', Path(__file__).resolve().parents[1] / 'portal.db'))
 
 
 def _conn():

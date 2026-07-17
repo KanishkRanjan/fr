@@ -23,6 +23,8 @@ GET    /questions/{id}            -> question; add ?include_reference=true for t
 DELETE /questions/{id}            -> {"ok": true}
 POST   /questions/{id}/submit     body: {"student", "algorithm"?} -> validate() result
 """
+import os
+
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -37,9 +39,8 @@ store.init_db()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        'http://localhost:5173', 'http://127.0.0.1:5173',
-    ],
+    allow_origins=os.environ.get(
+        'CORS_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(','),
     allow_methods=['*'],
     allow_headers=['*'],
 )
