@@ -4,6 +4,23 @@ ER diagram editor (`drawdb-clone`, React/Vite) plus a validator API
 (`validator`, FastAPI + native Bliss engine) that checks a student's
 diagram against a teacher's reference by graph isomorphism.
 
+## Hosted version
+
+- **Frontend:** https://kanishkranjan.github.io/fr/ — auto-deployed to GitHub
+  Pages on every push to `main` (`.github/workflows/deploy-pages.yml`).
+- **Backend:** one-click deploy of the validator API to Render's free tier
+  (uses `render.yaml`):
+
+  [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/KanishkRanjan/fr)
+
+  After deploying, if Render assigns a URL other than
+  `https://er-validator-fr.onrender.com`, update the `VALIDATOR_URL`
+  repository variable (Settings → Secrets and variables → Actions →
+  Variables) and re-run the Pages workflow so the frontend points at it.
+  Free-tier notes: the service sleeps after ~15 min idle (first request
+  takes ~1 min to wake) and has no persistent disk, so saved questions
+  reset on redeploys.
+
 ## Run with Docker
 
 ```sh

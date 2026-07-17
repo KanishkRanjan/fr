@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: er-validator-fr
+    runtime: docker
+    plan: free
+    rootDir: validator
+    healthCheckPath: /health
+    envVars:
+      - key: CORS_ORIGINS
+        value: https://kanishkranjan.github.io
