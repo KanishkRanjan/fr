@@ -39,10 +39,8 @@ store.init_db()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.environ.get(
-        'CORS_ORIGINS',
-        'http://localhost:5173,http://127.0.0.1:5173,'
-        'https://kanishkranjan.github.io').split(','),
+    allow_origins=[o.strip() for o in
+                   os.environ.get('CORS_ORIGINS', '*').split(',')],
     allow_methods=['*'],
     allow_headers=['*'],
 )

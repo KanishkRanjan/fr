@@ -7,4 +7,4 @@ services:
     healthCheckPath: /health
     envVars:
       - key: CORS_ORIGINS
-        value: https://kanishkranjan.github.io
+        value: "*"
